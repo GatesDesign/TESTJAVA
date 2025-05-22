@@ -124,17 +124,30 @@ function enableForm() {
     timerInterval = setInterval(updateTimer, 1000);
 }
 
+function showRetakeCountdown() {
+    let countdown = 20 - Math.floor((Date.now() - parseInt(localStorage.getItem('javaTestSubmittedTime'), 10)) / 1000);
+    if (countdown < 0) countdown = 0;
+    let msg = document.getElementById('submitted-msg');
+    if (!msg) {
+        msg = document.createElement('div');
+        msg.id = "submitted-msg";
+        msg.style = "color:#388e3c;font-weight:600;text-align:center;margin-top:18px;font-size:1.1rem;";
+        document.getElementById('quiz-form').parentNode.insertBefore(msg, document.getElementById('quiz-form').nextSibling);
+    }
+    msg.textContent = `Test submitted. You can retake after ${countdown} seconds.`;
+}
+
 window.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('javaTestSubmitted') === 'yes') {
         if (canRetake()) {
             localStorage.removeItem('javaTestSubmitted');
             localStorage.removeItem('javaTestSubmittedTime');
-            enableForm();
+            location.reload(); // Auto-refresh to allow retake
         } else {
             disableForm();
             window.__submitted = true;
-            // Check again after 1 second
-            setTimeout(() => location.reload(), 1000);
+            showRetakeCountdown();
+            setTimeout(() => location.reload(), 1000); // Check every second
         }
     }
 });
@@ -156,13 +169,7 @@ function updateTimer() {
 function disableForm() {
     const form = document.getElementById('quiz-form');
     Array.from(form.elements).forEach(el => el.disabled = true);
-    if (!document.getElementById('submitted-msg')) {
-        const msg = document.createElement('div');
-        msg.id = "submitted-msg";
-        msg.textContent = "Test submitted. You can retake after 20 seconds.";
-        msg.style = "color:#388e3c;font-weight:600;text-align:center;margin-top:18px;font-size:1.1rem;";
-        form.parentNode.insertBefore(msg, form.nextSibling);
-    }
+    showRetakeCountdown();
 }
 
 function autoSubmit() {
