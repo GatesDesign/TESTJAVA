@@ -96,12 +96,46 @@
             <button type="submit">Submit</button>
         </form>
     </div>
+    <div style="color: #1976d2; background: #e3f2fd; padding: 10px; text-align: center; margin-bottom: 12px; font-size: 1rem;">
+      Please allow pop-ups for this site to enable automatic submission via WhatsApp.
+    </div>
+    <noscript>
+      <div style="color: #d32f2f; background: #fff3cd; padding: 16px; text-align: center; font-weight: bold;">
+        JavaScript is required for this test. Please enable JavaScript in your browser settings.
+      </div>
+    </noscript>
     <script>
-// Prevent retake on refresh or revisit
+// Allow retake after 20 seconds
+function canRetake() {
+    const lastSubmit = localStorage.getItem('javaTestSubmittedTime');
+    if (!lastSubmit) return true;
+    const now = Date.now();
+    return (now - parseInt(lastSubmit, 10)) > 20000; // 20 seconds
+}
+
+function enableForm() {
+    const form = document.getElementById('quiz-form');
+    Array.from(form.elements).forEach(el => el.disabled = false);
+    const msg = document.getElementById('submitted-msg');
+    if (msg) msg.remove();
+    window.__submitted = false;
+    timeLeft = 300;
+    document.getElementById('time').textContent = '05:00';
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
 window.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('javaTestSubmitted') === 'yes') {
-        disableForm();
-        window.__submitted = true;
+        if (canRetake()) {
+            localStorage.removeItem('javaTestSubmitted');
+            localStorage.removeItem('javaTestSubmittedTime');
+            enableForm();
+        } else {
+            disableForm();
+            window.__submitted = true;
+            // Check again after 1 second
+            setTimeout(() => location.reload(), 1000);
+        }
     }
 });
 
@@ -122,11 +156,10 @@ function updateTimer() {
 function disableForm() {
     const form = document.getElementById('quiz-form');
     Array.from(form.elements).forEach(el => el.disabled = true);
-    // Optionally show a message
     if (!document.getElementById('submitted-msg')) {
         const msg = document.createElement('div');
         msg.id = "submitted-msg";
-        msg.textContent = "Test submitted. You cannot retake or restart.";
+        msg.textContent = "Test submitted. You can retake after 20 seconds.";
         msg.style = "color:#388e3c;font-weight:600;text-align:center;margin-top:18px;font-size:1.1rem;";
         form.parentNode.insertBefore(msg, form.nextSibling);
     }
@@ -136,6 +169,7 @@ function autoSubmit() {
     if (window.__submitted) return;
     window.__submitted = true;
     localStorage.setItem('javaTestSubmitted', 'yes');
+    localStorage.setItem('javaTestSubmittedTime', Date.now().toString());
     const total = 10;
     let answers = [];
     for(let i=1; i<=total; i++) {
@@ -188,6 +222,7 @@ document.getElementById('quiz-form').onsubmit = function(e) {
         return;
     }
     localStorage.setItem('javaTestSubmitted', 'yes');
+    localStorage.setItem('javaTestSubmittedTime', Date.now().toString());
     const message = encodeURIComponent(
         'Java Test Submission\n' +
         'Name: ' + fullname + '\n' +
