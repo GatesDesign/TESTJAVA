@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Practical Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="timer" style="text-align:center;font-size:1.2rem;color:#d32f2f;font-weight:600;margin-bottom:18px;">
+        Time left: <span id="time">05:00</span>
+    </div>
+    <div class="container">
+        <h1>Java Practical Test</h1>
+        <p style="text-align:center; color:#555; margin-bottom:24px;">
+            Answer all questions. Select the best option for each.<br>
+            <strong>Topics:</strong> Fundamentals, Data Types, Syntax
+        </p>
+        <form id="quiz-form">
+            <div class="form-info">
+                <label for="fullname"><strong>Full Name:</strong></label><br>
+                <input type="text" id="fullname" name="fullname" required style="width:98%;padding:8px;margin-bottom:12px;"><br>
+                <label for="matric"><strong>Matric No:</strong></label><br>
+                <input type="text" id="matric" name="matric" required style="width:98%;padding:8px;margin-bottom:18px;">
+            </div>
+            <div class="question">
+                <label>1. Which of the following is a valid Java identifier?</label><br>
+                <input type="radio" name="q1" value="A"> A) 1number<br>
+                <input type="radio" name="q1" value="B"> B) number_1<br>
+                <input type="radio" name="q1" value="C"> C) number-1<br>
+                <input type="radio" name="q1" value="D"> D) number 1<br>
+            </div>
+            <div class="question">
+                <label>2. What is the default value of an int variable in Java?</label><br>
+                <input type="radio" name="q2" value="A"> A) 0<br>
+                <input type="radio" name="q2" value="B"> B) null<br>
+                <input type="radio" name="q2" value="C"> C) undefined<br>
+                <input type="radio" name="q2" value="D"> D) 1<br>
+            </div>
+            <div class="question">
+                <label>3. Which data type is used to store a single character in Java?</label><br>
+                <input type="radio" name="q3" value="A"> A) char<br>
+                <input type="radio" name="q3" value="B"> B) String<br>
+                <input type="radio" name="q3" value="C"> C) character<br>
+                <input type="radio" name="q3" value="D"> D) int<br>
+            </div>
+            <div class="question">
+                <label>4. Which of the following is the correct way to start a single-line comment in Java?</label><br>
+                <input type="radio" name="q4" value="A"> A) // comment<br>
+                <input type="radio" name="q4" value="B"> B) <!-- comment --><br>
+                <input type="radio" name="q4" value="C"> C) # comment<br>
+                <input type="radio" name="q4" value="D"> D) /* comment */<br>
+            </div>
+            <div class="question">
+                <label>5. What is the size of a double data type in Java?</label><br>
+                <input type="radio" name="q5" value="A"> A) 4 bytes<br>
+                <input type="radio" name="q5" value="B"> B) 8 bytes<br>
+                <input type="radio" name="q5" value="C"> C) 2 bytes<br>
+                <input type="radio" name="q5" value="D"> D) 16 bytes<br>
+            </div>
+            <div class="question">
+                <label>6. Which keyword is used to define a constant in Java?</label><br>
+                <input type="radio" name="q6" value="A"> A) static<br>
+                <input type="radio" name="q6" value="B"> B) final<br>
+                <input type="radio" name="q6" value="C"> C) const<br>
+                <input type="radio" name="q6" value="D"> D) constant<br>
+            </div>
+            <div class="question">
+                <label>7. Which of the following is a correct variable declaration?</label><br>
+                <input type="radio" name="q7" value="A"> A) int 1num = 5;<br>
+                <input type="radio" name="q7" value="B"> B) int num1 = 5;<br>
+                <input type="radio" name="q7" value="C"> C) int num-1 = 5;<br>
+                <input type="radio" name="q7" value="D"> D) int num 1 = 5;<br>
+            </div>
+            <div class="question">
+                <label>8. Which of the following is NOT a primitive data type in Java?</label><br>
+                <input type="radio" name="q8" value="A"> A) int<br>
+                <input type="radio" name="q8" value="B"> B) float<br>
+                <input type="radio" name="q8" value="C"> C) String<br>
+                <input type="radio" name="q8" value="D"> D) char<br>
+            </div>
+            <div class="question">
+                <label>9. What is the correct way to assign the value 10 to a variable x in Java?</label><br>
+                <input type="radio" name="q9" value="A"> A) int x = 10;<br>
+                <input type="radio" name="q9" value="B"> B) x := 10;<br>
+                <input type="radio" name="q9" value="C"> C) int x := 10;<br>
+                <input type="radio" name="q9" value="D"> D) x = int 10;<br>
+            </div>
+            <div class="question">
+                <label>10. Which of the following is the correct syntax for the main method in Java?</label><br>
+                <input type="radio" name="q10" value="A"> A) public static void main(String[] args)<br>
+                <input type="radio" name="q10" value="B"> B) static public void main(String args[])<br>
+                <input type="radio" name="q10" value="C"> C) Both A and B<br>
+                <input type="radio" name="q10" value="D"> D) void main(String[] args)<br>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script>
+// Prevent retake on refresh or revisit
+window.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('javaTestSubmitted') === 'yes') {
+        disableForm();
+        window.__submitted = true;
+    }
+});
+
+let timeLeft = 300; // 5 minutes in seconds
+let timerInterval = setInterval(updateTimer, 1000);
+
+function updateTimer() {
+    timeLeft--;
+    const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+    const sec = String(timeLeft % 60).padStart(2, '0');
+    document.getElementById('time').textContent = `${min}:${sec}`;
+    if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        autoSubmit();
+    }
+}
+
+function disableForm() {
+    const form = document.getElementById('quiz-form');
+    Array.from(form.elements).forEach(el => el.disabled = true);
+    // Optionally show a message
+    if (!document.getElementById('submitted-msg')) {
+        const msg = document.createElement('div');
+        msg.id = "submitted-msg";
+        msg.textContent = "Test submitted. You cannot retake or restart.";
+        msg.style = "color:#388e3c;font-weight:600;text-align:center;margin-top:18px;font-size:1.1rem;";
+        form.parentNode.insertBefore(msg, form.nextSibling);
+    }
+}
+
+function autoSubmit() {
+    if (window.__submitted) return;
+    window.__submitted = true;
+    localStorage.setItem('javaTestSubmitted', 'yes');
+    const total = 10;
+    let answers = [];
+    for(let i=1; i<=total; i++) {
+        const selected = document.querySelector('input[name="q'+i+'"]:checked');
+        answers.push('Q' + i + ': ' + (selected ? selected.value : 'No answer'));
+    }
+    const fullname = document.getElementById('fullname').value.trim() || 'No name';
+    const matric = document.getElementById('matric').value.trim() || 'No matric';
+    const message = encodeURIComponent(
+        'Java Test Submission (Auto)\n' +
+        'Name: ' + fullname + '\n' +
+        'Matric No: ' + matric + '\n' +
+        answers.join(', ')
+    );
+    const whatsappNumber = '2349157886806';
+    const url = `https://wa.me/${whatsappNumber}?text=${message}`;
+    alert('Time is up! Your answers will be submitted automatically.');
+    window.open(url, '_blank');
+    disableForm();
+}
+
+// Auto-submit if user leaves the page, switches tab, or minimizes app
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden && !window.__submitted) {
+        autoSubmit();
+    }
+});
+
+document.getElementById('quiz-form').onsubmit = function(e) {
+    e.preventDefault();
+    if (window.__submitted) return;
+    window.__submitted = true;
+    clearInterval(timerInterval);
+    const total = 10;
+    let answers = [];
+    for(let i=1; i<=total; i++) {
+        const selected = document.querySelector('input[name="q'+i+'"]:checked');
+        answers.push('Q' + i + ': ' + (selected ? selected.value : 'No answer'));
+    }
+    const fullname = document.getElementById('fullname').value.trim();
+    const matric = document.getElementById('matric').value.trim();
+    if(!fullname || !matric) {
+        alert('Please enter your Full Name and Matric No.');
+        window.__submitted = false;
+        return;
+    }
+    const confirmMsg = `Please confirm your submission:\n\nName: ${fullname}\nMatric No: ${matric}\n\nAnswers:\n${answers.join('\n')}\n\nSubmit to WhatsApp?`;
+    if(!confirm(confirmMsg)) {
+        window.__submitted = false;
+        return;
+    }
+    localStorage.setItem('javaTestSubmitted', 'yes');
+    const message = encodeURIComponent(
+        'Java Test Submission\n' +
+        'Name: ' + fullname + '\n' +
+        'Matric No: ' + matric + '\n' +
+        answers.join(', ')
+    );
+    const whatsappNumber = '2349157886806';
+    const url = `https://wa.me/${whatsappNumber}?text=${message}`;
+    window.open(url, '_blank');
+    disableForm();
+};
+</script>
+</body>
+</html>
