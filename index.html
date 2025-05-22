@@ -118,6 +118,8 @@ function enableForm() {
     Array.from(form.elements).forEach(el => el.disabled = false);
     const msg = document.getElementById('submitted-msg');
     if (msg) msg.remove();
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) refreshBtn.remove();
     window.__submitted = false;
     timeLeft = 300;
     document.getElementById('time').textContent = '05:00';
@@ -135,6 +137,32 @@ function showRetakeCountdown() {
         document.getElementById('quiz-form').parentNode.insertBefore(msg, document.getElementById('quiz-form').nextSibling);
     }
     msg.textContent = `Test submitted. You can retake after ${countdown} seconds.`;
+
+    // Add refresh button if not present
+    let refreshBtn = document.getElementById('refresh-btn');
+    if (!refreshBtn) {
+        refreshBtn = document.createElement('button');
+        refreshBtn.id = 'refresh-btn';
+        refreshBtn.textContent = 'Refresh to Retake Test';
+        refreshBtn.disabled = true;
+        refreshBtn.style = "display:block;margin:18px auto 0 auto;padding:10px 24px;font-size:1rem;";
+        msg.parentNode.insertBefore(refreshBtn, msg.nextSibling);
+
+        // Enable after 5 seconds
+        setTimeout(() => {
+            refreshBtn.disabled = false;
+        }, 5000);
+
+        refreshBtn.onclick = function() {
+            if (canRetake()) {
+                localStorage.removeItem('javaTestSubmitted');
+                localStorage.removeItem('javaTestSubmittedTime');
+                location.reload();
+            } else {
+                alert('You can only retake after 20 seconds.');
+            }
+        };
+    }
 }
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -142,12 +170,12 @@ window.addEventListener('DOMContentLoaded', function() {
         if (canRetake()) {
             localStorage.removeItem('javaTestSubmitted');
             localStorage.removeItem('javaTestSubmittedTime');
-            location.reload(); // Auto-refresh to allow retake
+            enableForm();
         } else {
             disableForm();
             window.__submitted = true;
             showRetakeCountdown();
-            setTimeout(() => location.reload(), 1000); // Check every second
+            // No auto-refresh!
         }
     }
 });
