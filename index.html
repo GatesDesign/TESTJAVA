@@ -226,10 +226,27 @@ function autoSubmit() {
     disableForm();
 }
 
-// Auto-submit if user leaves the page, switches tab, or minimizes app
+// Auto-submit if user leaves the page, switches tab, minimizes, maximizes, or closes app
 document.addEventListener('visibilitychange', function() {
     if (document.hidden && !window.__submitted) {
         autoSubmit();
+    }
+});
+
+// Auto-submit if window is minimized or maximized
+window.addEventListener('resize', function() {
+    if (!window.__submitted) {
+        autoSubmit();
+    }
+});
+
+// Auto-submit if user tries to close, reload, or navigate away
+window.addEventListener('beforeunload', function(e) {
+    if (!window.__submitted) {
+        autoSubmit();
+        // Optionally show a warning (commented out for silent auto-submit)
+        // e.preventDefault();
+        // e.returnValue = '';
     }
 });
 
